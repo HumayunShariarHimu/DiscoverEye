@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DiscoverEye</title>
+<style>
+:root{
+ --bg:#000;
+ --panel:#050505;
+ --green:#00ff41;
+ --green-d:#0a7a2f;
+ --red:#ff0033;
+ --text:#b6ffcc;
+ --border:#003b1a;
+ --glow:rgba(0,255,65,.6);
+}
+
+*{
+ box-sizing:border-box;
+ font-family:Consolas,monospace;
+ text-shadow:0 0 2px var(--green);
+}
+
+body{
+ margin:0;
+ background:var(--bg);
+ color:var(--text);
+}
+
+/* scanline */
+body::before{
+ content:'';
+ position:fixed;
+ inset:0;
+ background:repeating-linear-gradient(
+  0deg,
+  rgba(0,0,0,.15),
+  rgba(0,0,0,.15) 1px,
+  transparent 1px,
+  transparent 2px
+ );
+ pointer-events:none;
+ opacity:.25;
+}
+
+header{
+ padding:30px 15px;
+ border-bottom:1px dashed var(--border);
+}
+
+h1{
+ margin:0;
+ font-size:36px;
+ color:var(--green);
+ letter-spacing:3px;
+ text-shadow:0 0 20px var(--glow);
+}
+
+.subtitle{
+ font-size:13px;
+ color:var(--green-d);
+ margin-top:5px;
+}
+
+main{
+ max-width:1200px;
+ margin:auto;
+ padding:20px 15px;
+}
+
+.grid{
+ display:grid;
+ grid-template-columns:2fr 1fr;
+ gap:30px;
+}
+
+.card{
+ background:var(--panel);
+ border:1px solid var(--border);
+ padding:20px;
+ box-shadow:0 0 20px rgba(0,255,65,.1);
+}
+
+h3{
+ margin-top:0;
+ color:var(--green);
+ border-left:3px solid var(--green);
+ padding-left:10px;
+}
+
+label{
+ display:block;
+ font-size:12px;
+ color:var(--green-d);
+ margin:14px 0 6px;
+}
+
+input,select,textarea{
+ width:100%;
+ padding:12px;
+ background:#000;
+ border:1px solid var(--border);
+ color:var(--text);
+}
+
+input:focus,textarea:focus,select:focus{
+ outline:none;
+ border-color:var(--green);
+ box-shadow:0 0 10px var(--glow);
+}
+
+.actions{
+ display:flex;
+ gap:10px;
+ margin-top:20px;
+ flex-wrap:wrap;
+}
+
+.btn{
+ flex:1;
+ padding:14px;
+ background:var(--green);
+ color:#001a08;
+ border:none;
+ font-weight:bold;
+ cursor:pointer;
+ letter-spacing:1px;
+}
+
+.btn.ghost{
+ background:#000;
+ color:var(--green);
+ border:1px solid var(--green);
+}
+
+.btn:hover{
+ box-shadow:0 0 20px var(--glow);
+}
+
+.results{
+ margin-top:25px;
+}
+
+.result{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ padding:14px;
+ background:#020202;
+ border-left:3px solid var(--green);
+ margin-bottom:10px;
+}
+
+.result strong{
+ color:var(--green);
+}
+
+.small{
+ font-size:12px;
+ color:var(--green-d);
+}
+
+.result a{
+ text-decoration:none;
+ color:var(--green);
+ border:1px solid var(--green);
+ padding:6px 10px;
+}
+
+.result a:hover{
+ background:var(--green);
+ color:#000;
+}
+
+.saved{
+ max-height:260px;
+ overflow:auto;
+}
+
+.alert{
+ margin-top:20px;
+ padding:14px;
+ border:1px solid var(--red);
+ color:var(--red);
+ font-size:12px;
+ box-shadow:0 0 10px rgba(255,0,50,.4);
+}
+
+footer{
+ text-align:center;
+ font-size:12px;
+ color:var(--green-d);
+ padding:20px;
+ border-top:1px dashed var(--border);
+}
+
+.notification{
+ position:fixed;
+ top:20px;
+ right:20px;
+ padding:14px 22px;
+ background:var(--panel);
+ border:1px solid var(--green);
+ color:var(--green);
+ box-shadow:0 0 20px var(--glow);
+ opacity:0;
+ transform:translateX(100%);
+ transition:.3s;
+}
+.notification.show{
+ opacity:1;
+ transform:translateX(0);
+}
+
+@media(max-width:900px){
+ .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+<center>
+<header>
+ <h1>DiscoverEye</h1>
+
+</header>
+
+<main>
+<div class="grid">
+
+<section class="card">
+<h3>INPUT_TERMINAL</h3>
+
+<label>Target Identifier</label>
+<input id="name" placeholder="Name | Phone | Username">
+
+<label>Geo Location</label>
+<input id="city" placeholder="City | Country">
+
+<label>Industry / Topic</label>
+<input id="industry" placeholder="Tech | Banking | Real Estate">
+
+<label>Category</label>
+<select id="category">
+<option value="">Select</option>
+<option>Business</option>
+<option>Investor</option>
+<option>Government</option>
+</select>
+
+<div class="actions">
+<button class="btn" id="run">EXECUTE</button>
+<button class="btn ghost" id="copy">COPY_LINKS</button>
+</div>
+
+<div class="results" id="results">
+<h3>OUTPUT_LOG</h3>
+</div>
+</section>
+
+</div>
+</main>
+
+<div class="notification" id="n"></div>
+
+<footer>
+DiscoverEye © Humayun Shariar Himu
+</footer>
+
+<script>
+const r=document.getElementById('results');
+const n=document.getElementById('n');
+const notify=m=>{n.textContent=m;n.classList.add('show');setTimeout(()=>n.classList.remove('show'),2500)};
+
+function build(p){
+ const all=encodeURIComponent([p.name,p.city,p.industry,p.category].filter(Boolean).join(' '));
+ const name=encodeURIComponent(p.name);
+ return[
+  {t:'Telegram Scan',q:`https://t.me/search?query=${name}`},
+  {t:'WhatsApp Probe',q:`https://wa.me/${p.name.replace(/\D/g,'')}`},
+  {t:'Facebook Recon',q:`https://www.facebook.com/search/people/?q=${name}`},
+  {t:'LinkedIn Intel',q:`https://www.linkedin.com/search/results/people/?keywords=${name}`},
+  {t:'Global Google OSINT',q:`https://www.google.com/search?q=${all}`}
+ ];
+}
+
+document.getElementById('run').onclick=()=>{
+ const name=document.getElementById('name').value.trim();
+ if(!name)return notify('TARGET REQUIRED');
+ const p={
+  name,
+  city:city.value.trim(),
+  industry:industry.value.trim(),
+  category:category.value
+ };
+ const q=build(p);
+ r.innerHTML='<h3>:: OUTPUT_LOG</h3>';
+ q.forEach(i=>{
+  const d=document.createElement('div');
+  d.className='result';
+  d.innerHTML=`<div><strong>> ${i.t}</strong></div><a target="_blank" href="${i.q}">OPEN</a>`;
+  r.appendChild(d);
+ });
+ notify('SCAN COMPLETE');
+};
+
+document.getElementById('copy').onclick=()=>{
+ const links=[...r.querySelectorAll('a')].map(a=>a.href).join('\n');
+ if(!links)return notify('NO DATA');
+ navigator.clipboard.writeText(links);
+ notify('LINKS COPIED');
+};
+</script>
+</center>
+</body>
+  </html>
