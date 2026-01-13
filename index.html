@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiscoverEye</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --google-bg: #0a0a0a;
+            --matrix-green: #00ff41;
+            --search-bar-bg: #171717;
+            --border-color: #333;
+            --link-blue: #8ab4f8;
+            --text-gray: #bdc1c6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--google-bg);
+            color: var(--text-gray);
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        /* Top Navigation Simulation */
+        .top-nav {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            padding: 15px 20px;
+            font-size: 13px;
+            color: var(--matrix-green);
+        }
+
+        .top-nav span { margin-left: 15px; cursor: pointer; }
+
+        /* Centered Search Engine Layout */
+        .search-wrapper {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 12vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: margin-top 0.5s ease;
+        }
+
+        .search-wrapper.active {
+            margin-top: 20px;
+        }
+
+        .logo {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            letter-spacing: -3px;
+            color: var(--matrix-green);
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+        }
+
+        .logo span { color: #fff; }
+
+        .search-box-container {
+            width: 100%;
+            position: relative;
+        }
+
+        .search-bar {
+            width: 100%;
+            background: var(--search-bar-bg);
+            border: 1px solid var(--border-color);
+            padding: 14px 25px;
+            padding-left: 45px;
+            border-radius: 24px;
+            font-size: 16px;
+            color: var(--matrix-green);
+            font-family: inherit;
+            outline: none;
+            transition: box-shadow 0.2s;
+        }
+
+        .search-bar:hover, .search-bar:focus {
+            box-shadow: 0 1px 6px rgba(0,255,65,0.2);
+            border-color: #555;
+        }
+
+        /* Search Icon Simulation */
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9aa0a6;
+        }
+
+        .button-group {
+            margin-top: 30px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            background-color: #303134;
+            border: 1px solid transparent;
+            color: #e8eaed;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            border: 1px solid var(--matrix-green);
+            color: var(--matrix-green);
+        }
+
+        /* Results Styling (Google Style) */
+        .results-container {
+            width: 100%;
+            max-width: 700px;
+            margin-top: 30px;
+            display: none;
+            padding: 0 15px;
+        }
+
+        .result-item {
+            margin-bottom: 30px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; } to { opacity: 1; }
+        }
+
+        .result-url {
+            font-size: 14px;
+            color: var(--text-gray);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .result-title {
+            font-size: 20px;
+            color: var(--link-blue);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .result-title:hover { text-decoration: underline; }
+
+        .result-snippet {
+            font-size: 14px;
+            line-height: 1.58;
+            color: #bdc1c6;
+        }
+
+        .stats {
+            color: #9aa0a6;
+            font-size: 14px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 480px) {
+            .logo { font-size: 2.5rem; }
+            .button-group { flex-direction: column; width: 100%; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+   
+
+    <div class="search-wrapper" id="wrapper">
+        <div class="logo">Discover<span>Eye</span></div>
+        
+        <div class="search-box-container">
+            <span class="search-icon"></span>
+            <input type="text" id="targetInput" class="search-bar" placeholder="Search...." autocomplete="off">
+        </div>
+
+        <div class="button-group">
+            <button class="btn" onclick="executeScan()">OSINT Search</button>
+            <button class="btn" onclick="copyAll()">Extract Links</button>
+        </div>
+    </div>
+
+    <div class="results-container" id="resultsContainer">
+        <div class="stats" id="searchStats"></div>
+        <div id="resultsList"></div>
+    </div>
+
+    <script>
+        function executeScan() {
+            const target = document.getElementById('targetInput').value.trim();
+            if (!target) return;
+
+            // Shift UI to top like Google
+            document.getElementById('wrapper').classList.add('active');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const resultsList = document.getElementById('resultsList');
+            const stats = document.getElementById('searchStats');
+
+            resultsList.innerHTML = '';
+            resultsContainer.style.display = 'block';
+            
+            const encoded = encodeURIComponent(target);
+            const phone = target.replace(/\D/g, '');
+
+            const resources = [
+                { name: 'Google Search Index', url: `https://www.google.com/search?q=${encoded}`, desc: `Global indexing for ${target}. Retrieving public records and cached data.` },
+                { name: 'Facebook Social Recon', url: `https://www.facebook.com/search/people/?q=${encoded}`, desc: `Scanning social graph for profile matches related to ${target}.` },
+                { name: 'Instagram Media Trace', url: `https://www.instagram.com/explore/tags/${target.replace(/\s+/g, '')}/`, desc: `Visual footprint analysis through tagged media and hashtags.` },
+                { name: 'LinkedIn Professional DB', url: `https://www.linkedin.com/search/results/all/?keywords=${encoded}`, desc: `Professional history and corporate affiliation search.` },
+                { name: 'X (Twitter) Real-time Feed', url: `https://twitter.com/search?q=${encoded}`, desc: `Analyzing latest mentions and micro-blogging activity.` },
+                { name: 'YouTube Video Intelligence', url: `https://www.youtube.com/results?search_query=${encoded}`, desc: `Searching through video descriptions, titles, and metadata.` },
+                { name: 'Bing Analytical Nodes', url: `https://www.bing.com/search?q=${encoded}`, desc: `Secondary search node for redundant data verification.` },
+                { name: 'Pinterest Visual Mapping', url: `https://www.pinterest.com/search/pins/?q=${encoded}`, desc: `User-curated boards and image-based interest discovery.` }
+            ];
+
+            if (phone.length >= 8) {
+                resources.push(
+                    { name: 'WhatsApp Protocol Link', url: `https://wa.me/${phone}`, desc: `Checking messaging availability for identifier ${phone}.` },
+                    { name: 'Telegram Entry Point', url: `https://t.me/${phone}`, desc: `Direct communication channel for encrypted network.` },
+                    { name: 'TrueCaller Identifier', url: `https://www.truecaller.com/search/db/${phone}`, desc: `Crowdsourced name identification for target number.` }
+                );
+            }
+
+            stats.innerText = `About ${resources.length} nodes found (0.15 seconds)`;
+
+            resources.forEach((src, i) => {
+                setTimeout(() => {
+                    const item = document.createElement('div');
+                    item.className = 'result-item';
+                    item.innerHTML = `
+                        <div class="result-url">${src.url}</div>
+                        <a href="${src.url}" target="_blank" class="result-title">${src.name}</a>
+                        <div class="result-snippet">${src.desc}</div>
+                    `;
+                    resultsList.appendChild(item);
+                }, i * 100);
+            });
+        }
+
+        function copyAll() {
+            const links = [...document.querySelectorAll('#resultsList a')].map(a => a.href).join('\n');
+            if (links) {
+                navigator.clipboard.writeText(links);
+                alert("ALL NODES EXTRACTED TO CLIPBOARD");
+            }
+        }
+
+        // Enter key support
+        document.getElementById('targetInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') executeScan();
+        });
+    </script>
+</body>
+</html>
