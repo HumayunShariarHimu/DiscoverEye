@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Platform Search Bot</title>
+    <style>
+        :root { --primary: #2563eb; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: auto; }
+        .search-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; }
+        input { width: 70%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; }
+        button { padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 20px; }
+        .card { background: white; padding: 15px; border-radius: 10px; border-left: 5px solid; text-decoration: none; color: #333; transition: 0.3s; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        .live-section { margin-top: 30px; background: #fff; padding: 20px; border-radius: 10px; }
+        .live-item { border-bottom: 1px solid #eee; padding: 10px 0; }
+        .tag { font-size: 12px; background: #e2e8f0; padding: 2px 8px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search-box">
+            <h2>গ্লোবাল সার্চ ড্যাশবোর্ড</h2>
+            <form action="/search" method="post">
+                <input type="text" name="query" value="{{ query if query else '' }}" placeholder="যেকোনো কিছু লিখুন..." required>
+                <button type="submit">সার্চ করুন</button>
+            </form>
+        </div>
+
+        {% if platforms %}
+        <div class="grid">
+            {% for p in platforms %}
+            <a href="{{ p.url }}" target="_blank" class="card" style="border-left-color: {{ p.color }}">
+                <strong>{{ p.name }}</strong>
+                <p style="font-size: 13px; color: #666;">সরাসরি {{ p.name }}-এ ফলাফল দেখুন →</p>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if live_data %}
+        <div class="live-section">
+            <h3>লাইভ স্ক্র্যাপড তথ্য:</h3>
+            {% for item in live_data %}
+            <div class="live-item">
+                <span class="tag">{{ item.source }}</span>
+                <p>{{ item.content }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
