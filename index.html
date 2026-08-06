@@ -1,272 +1,1647 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DiscoverEye</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DiscoverEye · OSINT Nexus Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        :root {
-            --google-bg: #0a0a0a;
-            --matrix-green: #00ff41;
-            --search-bar-bg: #171717;
-            --border-color: #333;
-            --link-blue: #8ab4f8;
-            --text-gray: #bdc1c6;
+        /* ============================================================
+               ROOT : DARK NEON THEME (PRO)
+               ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg-primary: #070b0d;
+            --bg-secondary: #0d1317;
+            --bg-card: #111a1f;
+            --bg-input: #162026;
+            --border-dim: #1f2e36;
+            --neon-green: #00ff88;
+            --neon-cyan: #00d4ff;
+            --neon-purple: #b388ff;
+            --neon-pink: #ff6b9d;
+            --neon-orange: #ffab40;
+            --neon-yellow: #ffea00;
+            --text-primary: #e8edee;
+            --text-secondary: #8a9ba8;
+            --text-muted: #4d5f6b;
+            --glow-green: 0 0 24px rgba(0, 255, 136, 0.18);
+            --glow-cyan: 0 0 24px rgba(0, 212, 255, 0.14);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
-            background-color: var(--google-bg);
-            color: var(--text-gray);
+            background: var(--bg-primary);
+            color: var(--text-primary);
             font-family: 'JetBrains Mono', monospace;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             min-height: 100vh;
-            padding: 10px;
-        }
-
-        /* Top Navigation Simulation */
-        .top-nav {
-            width: 100%;
-            display: flex;
-            justify-content: flex-end;
-            padding: 15px 20px;
-            font-size: 13px;
-            color: var(--matrix-green);
-        }
-
-        .top-nav span { margin-left: 15px; cursor: pointer; }
-
-        /* Centered Search Engine Layout */
-        .search-wrapper {
-            width: 100%;
-            max-width: 600px;
-            margin-top: 12vh;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: margin-top 0.5s ease;
+            background-image:
+                radial-gradient(ellipse at 15% 50%, rgba(0, 255, 136, 0.04) 0%, transparent 70%),
+                radial-gradient(ellipse at 85% 20%, rgba(0, 212, 255, 0.04) 0%, transparent 70%),
+                radial-gradient(ellipse at 50% 100%, rgba(179, 136, 255, 0.03) 0%, transparent 60%);
         }
 
-        .search-wrapper.active {
-            margin-top: 20px;
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-green);
+            border-radius: 10px;
+            box-shadow: var(--glow-green);
         }
 
-        .logo {
-            font-size: 4rem;
-            font-weight: 700;
-            margin-bottom: 30px;
-            letter-spacing: -3px;
-            color: var(--matrix-green);
-            text-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
-        }
-
-        .logo span { color: #fff; }
-
-        .search-box-container {
+        /* ============================================================
+               LAYOUT
+               ============================================================ */
+        .app-container {
             width: 100%;
-            position: relative;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        .search-bar {
-            width: 100%;
-            background: var(--search-bar-bg);
-            border: 1px solid var(--border-color);
-            padding: 14px 25px;
-            padding-left: 45px;
-            border-radius: 24px;
-            font-size: 16px;
-            color: var(--matrix-green);
-            font-family: inherit;
-            outline: none;
-            transition: box-shadow 0.2s;
-        }
-
-        .search-bar:hover, .search-bar:focus {
-            box-shadow: 0 1px 6px rgba(0,255,65,0.2);
-            border-color: #555;
-        }
-
-        /* Search Icon Simulation */
-        .search-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9aa0a6;
-        }
-
-        .button-group {
-            margin-top: 30px;
+        /* ============================================================
+               TOP BAR
+               ============================================================ */
+        .topbar {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 4px 16px 4px;
+            border-bottom: 1px solid var(--border-dim);
+            flex-wrap: wrap;
             gap: 12px;
         }
 
-        .btn {
-            background-color: #303134;
-            border: 1px solid transparent;
-            color: #e8eaed;
-            padding: 10px 20px;
-            border-radius: 4px;
-            font-size: 14px;
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.6rem;
+            letter-spacing: -1px;
+        }
+        .brand .eye {
+            color: var(--neon-green);
+            text-shadow: var(--glow-green);
+        }
+        .brand .eye i {
+            font-size: 1.7rem;
+            margin-right: 6px;
+        }
+        .brand .dim {
+            color: var(--text-secondary);
+            font-weight: 300;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .top-actions .badge {
+            font-size: 0.65rem;
+            background: rgba(0, 255, 136, 0.08);
+            color: var(--neon-green);
+            padding: 4px 14px;
+            border-radius: 40px;
+            border: 1px solid rgba(0, 255, 136, 0.15);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .top-actions .badge i {
+            font-size: 0.7rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-dim);
+            color: var(--text-secondary);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
             cursor: pointer;
-            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .theme-toggle:hover {
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+            box-shadow: var(--glow-green);
         }
 
-        .btn:hover {
-            border: 1px solid var(--matrix-green);
-            color: var(--matrix-green);
+        /* ============================================================
+               SEARCH HERO
+               ============================================================ */
+        .search-hero {
+            padding: 30px 0 18px 0;
+            text-align: center;
         }
 
-        /* Results Styling (Google Style) */
-        .results-container {
+        .search-hero .tagline {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .search-hero .tagline i {
+            color: var(--neon-green);
+            margin: 0 6px;
+        }
+
+        .search-hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 60px rgba(0, 255, 136, 0.08);
+            line-height: 1.2;
+        }
+        .search-hero h1 small {
+            font-size: 1.2rem;
+            font-weight: 300;
+            -webkit-text-fill-color: var(--text-secondary);
+            background: none;
+        }
+
+        /* ============================================================
+               SEARCH BAR
+               ============================================================ */
+        .search-panel {
+            margin: 20px 0 12px 0;
             width: 100%;
-            max-width: 700px;
-            margin-top: 30px;
-            display: none;
-            padding: 0 15px;
+            max-width: 900px;
         }
 
-        .result-item {
-            margin-bottom: 30px;
-            animation: fadeIn 0.4s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; } to { opacity: 1; }
-        }
-
-        .result-url {
-            font-size: 14px;
-            color: var(--text-gray);
-            margin-bottom: 4px;
-            white-space: nowrap;
+        .search-bar-wrapper {
+            display: flex;
+            gap: 0;
+            background: var(--bg-input);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-dim);
+            transition: var(--transition);
             overflow: hidden;
-            text-overflow: ellipsis;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        .search-bar-wrapper:focus-within {
+            border-color: var(--neon-green);
+            box-shadow: var(--glow-green), 0 4px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .result-title {
-            font-size: 20px;
-            color: var(--link-blue);
-            text-decoration: none;
+        .search-bar-wrapper .search-icon-left {
+            display: flex;
+            align-items: center;
+            padding: 0 16px 0 18px;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .search-bar-wrapper input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 18px 8px 18px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--text-primary);
+            outline: none;
+            min-width: 0;
+        }
+        .search-bar-wrapper input::placeholder {
+            color: var(--text-muted);
+            font-weight: 300;
+            font-size: 0.9rem;
+        }
+
+        .search-bar-wrapper .search-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding-right: 6px;
+        }
+        .search-bar-wrapper .search-actions button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .search-bar-wrapper .search-actions button:hover {
+            color: var(--neon-green);
+            background: rgba(0, 255, 136, 0.06);
+        }
+        .search-bar-wrapper .search-actions button.primary {
+            background: rgba(0, 255, 136, 0.08);
+            color: var(--neon-green);
+            border: 1px solid rgba(0, 255, 136, 0.12);
+        }
+        .search-bar-wrapper .search-actions button.primary:hover {
+            background: rgba(0, 255, 136, 0.18);
+            box-shadow: var(--glow-green);
+        }
+
+        /* ============================================================
+               FILTER BAR (Advanced)
+               ============================================================ */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+            justify-content: center;
+            align-items: center;
+        }
+        .filter-bar .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+        .filter-bar .filter-group label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 4px;
+        }
+        .filter-bar .filter-btn {
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.65rem;
+            font-weight: 400;
+            background: transparent;
+            border: 1px solid var(--border-dim);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .filter-bar .filter-btn i {
+            font-size: 0.6rem;
+        }
+        .filter-bar .filter-btn:hover {
+            border-color: var(--neon-green);
+            color: var(--text-primary);
+        }
+        .filter-bar .filter-btn.active {
+            background: rgba(0, 255, 136, 0.08);
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+            box-shadow: var(--glow-green);
+        }
+        .filter-bar .filter-btn.sort-btn {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+        .filter-bar .filter-btn.sort-btn:hover {
+            background: rgba(0, 212, 255, 0.06);
+        }
+
+        /* ============================================================
+               RESULTS AREA
+               ============================================================ */
+        .results-area {
+            margin-top: 28px;
+            width: 100%;
+            display: none;
+            animation: fadeUp 0.5s ease;
+        }
+        .results-area.visible {
             display: block;
-            margin-bottom: 5px;
         }
 
-        .result-title:hover { text-decoration: underline; }
-
-        .result-snippet {
-            font-size: 14px;
-            line-height: 1.58;
-            color: #bdc1c6;
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .stats {
-            color: #9aa0a6;
-            font-size: 14px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-dim);
+            margin-bottom: 22px;
+        }
+        .results-header .stats {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .results-header .stats strong {
+            color: var(--neon-green);
+            font-weight: 700;
+        }
+        .results-header .stats .time {
+            color: var(--text-muted);
+            margin-left: 10px;
+        }
+        .results-header .stats .time i {
+            margin-right: 4px;
         }
 
-        /* Mobile Responsive */
+        .results-header .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .results-header .actions button {
+            background: transparent;
+            border: 1px solid var(--border-dim);
+            color: var(--text-secondary);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .results-header .actions button:hover {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+        .results-header .actions button.danger:hover {
+            border-color: var(--neon-pink);
+            color: var(--neon-pink);
+        }
+
+        /* ============================================================
+               LOADER
+               ============================================================ */
+        .loader {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 0;
+            gap: 14px;
+            flex-direction: column;
+        }
+        .loader.visible {
+            display: flex;
+        }
+        .loader .spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid var(--border-dim);
+            border-top: 3px solid var(--neon-green);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            box-shadow: var(--glow-green);
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .loader .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+        .loader .label i {
+            color: var(--neon-green);
+            margin-right: 6px;
+        }
+        .loader .progress-bar {
+            width: 200px;
+            height: 2px;
+            background: var(--border-dim);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .loader .progress-bar .fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan));
+            transition: width 0.3s;
+            border-radius: 4px;
+        }
+
+        /* ============================================================
+               RESULT CARDS
+               ============================================================ */
+        .results-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dim);
+            border-radius: var(--radius-sm);
+            padding: 18px 22px;
+            transition: var(--transition);
+            cursor: default;
+            animation: slideIn 0.35s ease forwards;
+            opacity: 0;
+            transform: translateX(-6px);
+        }
+        .result-card:hover {
+            border-color: rgba(0, 255, 136, 0.2);
+            box-shadow: 0 4px 28px rgba(0, 0, 0, 0.4);
+            transform: translateX(4px);
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .result-card .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .result-card .card-top .source-badge {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 2px 14px;
+            border-radius: 40px;
+            background: rgba(0, 212, 255, 0.06);
+            border: 1px solid rgba(0, 212, 255, 0.08);
+            color: var(--neon-cyan);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .result-card .card-top .source-badge i {
+            font-size: 0.6rem;
+        }
+        .result-card .card-top .source-badge.green {
+            background: rgba(0, 255, 136, 0.06);
+            border-color: rgba(0, 255, 136, 0.08);
+            color: var(--neon-green);
+        }
+        .result-card .card-top .source-badge.purple {
+            background: rgba(179, 136, 255, 0.06);
+            border-color: rgba(179, 136, 255, 0.08);
+            color: var(--neon-purple);
+        }
+        .result-card .card-top .source-badge.pink {
+            background: rgba(255, 107, 157, 0.06);
+            border-color: rgba(255, 107, 157, 0.08);
+            color: var(--neon-pink);
+        }
+        .result-card .card-top .source-badge.orange {
+            background: rgba(255, 171, 64, 0.06);
+            border-color: rgba(255, 171, 64, 0.08);
+            color: var(--neon-orange);
+        }
+        .result-card .card-top .source-badge.yellow {
+            background: rgba(255, 234, 0, 0.06);
+            border-color: rgba(255, 234, 0, 0.08);
+            color: var(--neon-yellow);
+        }
+        .result-card .card-top .source-badge.gray {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+        }
+
+        .result-card .card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 8px 0 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .result-card .card-title a {
+            color: var(--neon-cyan);
+            text-decoration: none;
+            transition: var(--transition);
+            word-break: break-all;
+        }
+        .result-card .card-title a:hover {
+            color: var(--neon-green);
+            text-shadow: var(--glow-green);
+        }
+        .result-card .card-title .favicon {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            background: var(--border-dim);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .result-card .card-url {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            word-break: break-all;
+            margin-bottom: 6px;
+            font-weight: 300;
+        }
+        .result-card .card-url i {
+            margin-right: 4px;
+            font-size: 0.6rem;
+            color: var(--neon-green);
+        }
+
+        .result-card .card-desc {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-top: 4px;
+            font-weight: 300;
+        }
+        .result-card .card-desc .highlight {
+            color: var(--neon-green);
+            font-weight: 400;
+        }
+
+        .result-card .card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-dim);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+        .result-card .card-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .result-card .card-meta i {
+            font-size: 0.6rem;
+            color: var(--neon-green);
+        }
+
+        /* ============================================================
+               EMPTY STATE
+               ============================================================ */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        .empty-state i {
+            font-size: 3.5rem;
+            color: var(--border-dim);
+            margin-bottom: 16px;
+            display: block;
+        }
+        .empty-state h3 {
+            font-weight: 400;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+        .empty-state p {
+            font-size: 0.8rem;
+            margin-top: 6px;
+        }
+
+        /* ============================================================
+               TOAST
+               ============================================================ */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--bg-card);
+            border: 1px solid var(--neon-green);
+            border-radius: var(--radius-sm);
+            padding: 14px 24px;
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            box-shadow: var(--glow-green), 0 8px 40px rgba(0, 0, 0, 0.6);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            max-width: 90%;
+        }
+        .toast.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .toast i {
+            color: var(--neon-green);
+            font-size: 1.2rem;
+        }
+        .toast .close-toast {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0 4px;
+        }
+        .toast .close-toast:hover {
+            color: var(--neon-pink);
+        }
+
+        /* ============================================================
+               FOOTER
+               ============================================================ */
+        .footer {
+            margin-top: 50px;
+            padding: 20px 0 10px 0;
+            border-top: 1px solid var(--border-dim);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+        .footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .footer a:hover {
+            color: var(--neon-green);
+        }
+        .footer .links {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        /* ============================================================
+               RESPONSIVE
+               ============================================================ */
+        @media (max-width: 768px) {
+            .search-hero h1 {
+                font-size: 2.2rem;
+            }
+            .search-hero h1 small {
+                font-size: 0.9rem;
+                display: block;
+            }
+            .search-bar-wrapper {
+                flex-wrap: wrap;
+                border-radius: var(--radius-sm);
+            }
+            .search-bar-wrapper input {
+                padding: 14px 12px;
+                font-size: 0.9rem;
+                width: 100%;
+                order: 1;
+            }
+            .search-bar-wrapper .search-icon-left {
+                display: none;
+            }
+            .search-bar-wrapper .search-actions {
+                width: 100%;
+                padding: 8px 10px 10px 10px;
+                justify-content: flex-end;
+                border-top: 1px solid var(--border-dim);
+                order: 2;
+                flex-wrap: wrap;
+            }
+            .search-bar-wrapper .search-actions button {
+                font-size: 0.7rem;
+                padding: 6px 12px;
+            }
+            .search-bar-wrapper .search-actions button span.btn-label {
+                display: none;
+            }
+
+            .filter-bar {
+                gap: 6px;
+            }
+            .filter-bar .filter-btn {
+                font-size: 0.55rem;
+                padding: 4px 10px;
+            }
+
+            .result-card {
+                padding: 14px 16px;
+            }
+            .result-card .card-title {
+                font-size: 0.9rem;
+            }
+
+            .topbar .brand .dim {
+                display: none;
+            }
+            .top-actions .badge {
+                font-size: 0.55rem;
+                padding: 2px 10px;
+            }
+
+            .results-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .results-header .actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
         @media (max-width: 480px) {
-            .logo { font-size: 2.5rem; }
-            .button-group { flex-direction: column; width: 100%; }
-            .btn { width: 100%; }
+            body {
+                padding: 10px;
+            }
+            .search-hero h1 {
+                font-size: 1.6rem;
+            }
+            .search-hero .tagline {
+                font-size: 0.6rem;
+            }
+            .search-bar-wrapper input {
+                font-size: 0.8rem;
+                padding: 12px 10px;
+            }
+            .result-card .card-meta {
+                flex-direction: column;
+                gap: 6px;
+            }
+            .footer {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
 
-   
-
-    <div class="search-wrapper" id="wrapper">
-        <div class="logo">Discover<span>Eye</span></div>
-        
-        <div class="search-box-container">
-            <span class="search-icon"></span>
-            <input type="text" id="targetInput" class="search-bar" placeholder="Search...." autocomplete="off">
-        </div>
-
-        <div class="button-group">
-            <button class="btn" onclick="executeScan()">OSINT Search</button>
-            <button class="btn" onclick="copyAll()">Extract Links</button>
-        </div>
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMsg">Copied to clipboard</span>
+        <button class="close-toast" onclick="hideToast()">&times;</button>
     </div>
 
-    <div class="results-container" id="resultsContainer">
-        <div class="stats" id="searchStats"></div>
-        <div id="resultsList"></div>
+    <!-- ============================================================
+    APP
+    ============================================================ -->
+    <div class="app-container">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="brand">
+                <span class="eye"><i class="fas fa-eye"></i>Discover</span><span class="eye">Eye</span>
+                <span class="dim">· OSINT</span>
+            </div>
+            <div class="top-actions">
+                
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- SEARCH HERO -->
+        <section class="search-hero">
+            <div class="tagline">
+                <i class="fas fa-chevron-right"></i> OSINT Search Engine Intelligence System
+            </div>
+            <h1>
+                Search The <small>Digital</small> Shadow
+            </h1>
+        </section>
+
+        <!-- SEARCH PANEL -->
+        <div class="search-panel">
+            <div class="search-bar-wrapper" id="searchBarWrapper">
+                <div class="search-icon-left">
+                    <i class="fas fa-search" style="color:var(--neon-green);"></i>
+                </div>
+                <input
+                type="text"
+                id="queryInput"
+                placeholder="Email · phone · username · domain · IP · name · address …"
+                autocomplete="off"
+                spellcheck="false"
+                />
+                <div class="search-actions">
+                    <button onclick="executeOSINT()" class="primary">
+                        <i class="fas fa-bolt"></i>
+                        <span class="btn-label">Scan</span>
+                    </button>
+                    <button onclick="clearAll()" title="Clear">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Advanced Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label><i class="fas fa-filter"></i> Mode</label>
+                    <button class="filter-btn active" data-mode="auto"><i class="fas fa-robot"></i> Auto</button>
+                    <button class="filter-btn" data-mode="people"><i class="fas fa-user"></i> People</button>
+                    <button class="filter-btn" data-mode="email"><i class="fas fa-envelope"></i> Email</button>
+                    <button class="filter-btn" data-mode="phone"><i class="fas fa-phone"></i> Phone</button>
+                    <button class="filter-btn" data-mode="domain"><i class="fas fa-globe"></i> Domain</button>
+                    <button class="filter-btn" data-mode="ip"><i class="fas fa-network-wired"></i> IP</button>
+                    <button class="filter-btn" data-mode="username"><i class="fas fa-at"></i> Username</button>
+                    <button class="filter-btn" data-mode="social"><i class="fas fa-share-alt"></i> Social</button>
+                    <button class="filter-btn" data-mode="darkweb"><i class="fas fa-skull"></i> Darkweb</button>
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-sort"></i> Sort</label>
+                    <button class="filter-btn sort-btn" id="sortAlpha"><i class="fas fa-sort-alpha-down"></i> A-Z</button>
+                    <button class="filter-btn sort-btn" id="sortType"><i class="fas fa-tag"></i> Type</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS -->
+        <div class="results-area" id="resultsArea">
+            <div class="results-header">
+                <div class="stats" id="statsBar">
+                    <strong id="resultCount">0</strong> results
+                    <span class="time" id="resultTime"><i class="far fa-clock"></i> --</span>
+                </div>
+                <div class="actions">
+                    <button onclick="copyResults()"><i class="fas fa-copy"></i> Copy</button>
+                    <button onclick="exportJSON()"><i class="fas fa-file-export"></i> JSON</button>
+                    <button onclick="exportCSV()"><i class="fas fa-file-csv"></i> CSV</button>
+                    <button class="danger" onclick="clearResults()"><i class="fas fa-trash-alt"></i> Clear</button>
+                </div>
+            </div>
+
+            <!-- Loader -->
+            <div class="loader" id="loader">
+                <div class="spinner"></div>
+                <div class="label"><i class="fas fa-satellite-dish"></i> Scanning OSINT nodes …</div>
+                <div class="progress-bar"><div class="fill" id="progressFill"></div></div>
+            </div>
+
+            <!-- Results list -->
+            <div class="results-grid" id="resultsGrid">
+                <!-- dynamic cards -->
+            </div>
+
+            <!-- Empty state -->
+            <div class="empty-state" id="emptyState" style="display:none;">
+                <i class="fas fa-eye-slash"></i>
+                <h3>No intelligence gathered yet</h3>
+                <p>Enter a query above and hit <strong>Scan</strong> to begin.</p>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <span>DiscoverEye - All Rights Reserved</span>
+            <span>Humayun Shariar Himu</span>
+            </div>
+        </footer>
     </div>
 
+    <!-- ============================================================
+    JAVASCRIPT — COMPLETE OSINT ENGINE PRO
+    ============================================================ -->
     <script>
-        function executeScan() {
-            const target = document.getElementById('targetInput').value.trim();
-            if (!target) return;
+        // ============================================================
+        // STATE
+        // ============================================================
+        let currentResults = [];
+        let currentQuery = '';
+        let currentMode = 'auto';
+        let resultCounter = 0;
+        let sortMode = 'default'; // 'alpha', 'type'
 
-            // Shift UI to top like Google
-            document.getElementById('wrapper').classList.add('active');
-            const resultsContainer = document.getElementById('resultsContainer');
-            const resultsList = document.getElementById('resultsList');
-            const stats = document.getElementById('searchStats');
+        // ============================================================
+        // DOM REFS
+        // ============================================================
+        const queryInput = document.getElementById('queryInput');
+        const resultsArea = document.getElementById('resultsArea');
+        const resultsGrid = document.getElementById('resultsGrid');
+        const statsBar = document.getElementById('statsBar');
+        const resultCount = document.getElementById('resultCount');
+        const resultTime = document.getElementById('resultTime');
+        const loader = document.getElementById('loader');
+        const progressFill = document.getElementById('progressFill');
+        const emptyState = document.getElementById('emptyState');
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toastMsg');
 
-            resultsList.innerHTML = '';
-            resultsContainer.style.display = 'block';
-            
-            const encoded = encodeURIComponent(target);
-            const phone = target.replace(/\D/g, '');
+        // ============================================================
+        // FILTER / MODE TABS
+        // ============================================================
+        document.querySelectorAll('.filter-btn[data-mode]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn[data-mode]').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentMode = this.dataset.mode;
+                // update placeholder
+                const placeholders = {
+                    auto: 'Email · phone · username · domain · IP · name …',
+                    people: 'Full name · alias · location …',
+                    email: 'user@domain.com',
+                    phone: '+1 234 567 8900',
+                    domain: 'example.com',
+                    ip: '192.168.1.1',
+                    username: '@handle or username',
+                    social: 'Search for social profiles …',
+                    darkweb: 'Darkweb related queries …'
+                };
+                queryInput.placeholder = placeholders[currentMode] || 'Search …';
+                queryInput.focus();
+                // if there's already a query, re-execute
+                if (queryInput.value.trim()) executeOSINT();
+            });
+        });
 
-            const resources = [
-                { name: 'Google Search Index', url: `https://www.google.com/search?q=${encoded}`, desc: `Global indexing for ${target}. Retrieving public records and cached data.` },
-                { name: 'Facebook Social Recon', url: `https://www.facebook.com/search/people/?q=${encoded}`, desc: `Scanning social graph for profile matches related to ${target}.` },
-                { name: 'Instagram Media Trace', url: `https://www.instagram.com/explore/tags/${target.replace(/\s+/g, '')}/`, desc: `Visual footprint analysis through tagged media and hashtags.` },
-                { name: 'LinkedIn Professional DB', url: `https://www.linkedin.com/search/results/all/?keywords=${encoded}`, desc: `Professional history and corporate affiliation search.` },
-                { name: 'X (Twitter) Real-time Feed', url: `https://twitter.com/search?q=${encoded}`, desc: `Analyzing latest mentions and micro-blogging activity.` },
-                { name: 'YouTube Video Intelligence', url: `https://www.youtube.com/results?search_query=${encoded}`, desc: `Searching through video descriptions, titles, and metadata.` },
-                { name: 'Bing Analytical Nodes', url: `https://www.bing.com/search?q=${encoded}`, desc: `Secondary search node for redundant data verification.` },
-                { name: 'Pinterest Visual Mapping', url: `https://www.pinterest.com/search/pins/?q=${encoded}`, desc: `User-curated boards and image-based interest discovery.` }
-            ];
+        // ============================================================
+        // SORT BUTTONS
+        // ============================================================
+        document.getElementById('sortAlpha').addEventListener('click', function() {
+            sortMode = (sortMode === 'alpha') ? 'default' : 'alpha';
+            this.classList.toggle('active');
+            document.getElementById('sortType').classList.remove('active');
+            if (currentResults.length) applySorting();
+        });
+        document.getElementById('sortType').addEventListener('click', function() {
+            sortMode = (sortMode === 'type') ? 'default' : 'type';
+            this.classList.toggle('active');
+            document.getElementById('sortAlpha').classList.remove('active');
+            if (currentResults.length) applySorting();
+        });
 
-            if (phone.length >= 8) {
-                resources.push(
-                    { name: 'WhatsApp Protocol Link', url: `https://wa.me/${phone}`, desc: `Checking messaging availability for identifier ${phone}.` },
-                    { name: 'Telegram Entry Point', url: `https://t.me/${phone}`, desc: `Direct communication channel for encrypted network.` },
-                    { name: 'TrueCaller Identifier', url: `https://www.truecaller.com/search/db/${phone}`, desc: `Crowdsourced name identification for target number.` }
-                );
+        function applySorting() {
+            if (sortMode === 'alpha') {
+                currentResults.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sortMode === 'type') {
+                currentResults.sort((a, b) => (a.badge || '').localeCompare(b.badge || ''));
+            } else {
+                // default: keep original order (by index)
+                currentResults.sort((a, b) => a._idx - b._idx);
+            }
+            renderResults();
+        }
+
+        // ============================================================
+        // ENTER KEY
+        // ============================================================
+        queryInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') executeOSINT();
+        });
+
+        // ============================================================
+        // CORE: EXECUTE OSINT
+        // ============================================================
+        function executeOSINT() {
+            const raw = queryInput.value.trim();
+            if (!raw) {
+                showToast('⛔ Please enter a query');
+                return;
             }
 
-            stats.innerText = `About ${resources.length} nodes found (0.15 seconds)`;
+            currentQuery = raw;
+            currentResults = [];
+            resultCounter = 0;
 
-            resources.forEach((src, i) => {
+            resultsArea.classList.add('visible');
+            emptyState.style.display = 'none';
+            loader.classList.add('visible');
+            progressFill.style.width = '0%';
+            resultsGrid.innerHTML = '';
+
+            resultCount.textContent = '…';
+            resultTime.innerHTML = '<i class="far fa-clock"></i> scanning …';
+
+            let mode = currentMode;
+            if (mode === 'auto') {
+                mode = detectMode(raw);
+                // highlight matching tab
+                document.querySelectorAll('.filter-btn[data-mode]').forEach(t => {
+                    t.classList.toggle('active', t.dataset.mode === mode);
+                });
+                currentMode = mode;
+            }
+
+            const sources = buildSources(raw, mode);
+            const total = sources.length;
+
+            if (total === 0) {
+                loader.classList.remove('visible');
+                emptyState.style.display = 'block';
+                emptyState.innerHTML = `
+                    <i class="fas fa-search-minus"></i>
+                    <h3>No sources for this query type</h3>
+                    <p>Try a different search mode or query format.</p>
+                `;
+                resultCount.textContent = '0';
+                resultTime.innerHTML = '<i class="far fa-clock"></i> 0.00s';
+                return;
+            }
+
+            // Store index for sorting
+            sources.forEach((s, i) => s._idx = i);
+
+            let completed = 0;
+            const totalSteps = total;
+
+            sources.forEach((src, idx) => {
                 setTimeout(() => {
-                    const item = document.createElement('div');
-                    item.className = 'result-item';
-                    item.innerHTML = `
-                        <div class="result-url">${src.url}</div>
-                        <a href="${src.url}" target="_blank" class="result-title">${src.name}</a>
-                        <div class="result-snippet">${src.desc}</div>
-                    `;
-                    resultsList.appendChild(item);
-                }, i * 100);
+                    currentResults.push(src);
+                    completed++;
+                    const progress = (completed / totalSteps) * 100;
+                    progressFill.style.width = progress + '%';
+                    resultCount.textContent = completed;
+                    resultTime.innerHTML = `<i class="far fa-clock"></i> ${(idx * 0.07 + 0.1).toFixed(2)}s`;
+
+                    if (completed === totalSteps) {
+                        loader.classList.remove('visible');
+                        resultTime.innerHTML = `<i class="far fa-clock"></i> ${(totalSteps * 0.07 + 0.15).toFixed(2)}s · ${totalSteps} nodes`;
+                        // Apply sorting if any
+                        if (sortMode !== 'default') applySorting();
+                        else renderResults();
+                        showToast(`✅ ${totalSteps} OSINT sources scanned`);
+                    }
+                }, idx * 70 + 100);
             });
         }
 
-        function copyAll() {
-            const links = [...document.querySelectorAll('#resultsList a')].map(a => a.href).join('\n');
-            if (links) {
-                navigator.clipboard.writeText(links);
-                alert("ALL NODES EXTRACTED TO CLIPBOARD");
-            }
+        // ============================================================
+        // DETECT MODE (enhanced)
+        // ============================================================
+        function detectMode(raw) {
+            const trimmed = raw.trim();
+            if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return 'email';
+            if (/[\+\d]{6,}/.test(trimmed) && /\d/.test(trimmed)) return 'phone';
+            if (/^(\d{1,3}\.){3}\d{1,3}$/.test(trimmed)) return 'ip';
+            if (/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i.test(trimmed) && !/\s/.test(trimmed))
+                return 'domain';
+            if (trimmed.startsWith('@') || (!/\s/.test(trimmed) && trimmed.length > 2)) return 'username';
+            // check for darkweb keywords
+            if (/dark|onion|tor|bitcoin|crypto|hidden|breach|leak/i.test(trimmed)) return 'darkweb';
+            return 'people';
         }
 
-        // Enter key support
-        document.getElementById('targetInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') executeScan();
+        // ============================================================
+        // BUILD SOURCES — 52+ OSINT NODES (expanded)
+        // ============================================================
+        function buildSources(query, mode) {
+            const encoded = encodeURIComponent(query);
+            const clean = query.replace(/\s+/g, '');
+            const sources = [];
+
+            const add = (name, url, desc, badge = '') => {
+                sources.push({ name, url, desc, badge });
+            };
+
+            // ---- PEOPLE (expanded) ----
+            if (mode === 'people' || mode === 'auto') {
+                add('Google People Search', `https://www.google.com/search?q=${encoded}+person`,
+                    'Global web index for personal mentions.', 'green');
+                add('Bing People Search', `https://www.bing.com/search?q=${encoded}+person`,
+                    'Microsoft search index for public records.', 'gray');
+                add('DuckDuckGo People', `https://duckduckgo.com/?q=${encoded}+person`,
+                    'Privacy-focused search engine.', 'cyan');
+                add('Pipl', `https://pipl.com/search/?q=${encoded}`,
+                    'Deep web people search engine.', 'purple');
+                add('Spokeo', `https://www.spokeo.com/search?q=${encoded}`,
+                    'Social media and public records aggregator.', 'purple');
+                add('PeekYou', `https://www.peekyou.com/${clean}`,
+                    'Social media profile discovery.', 'orange');
+                add('ZabaSearch', `https://www.zabasearch.com/people/${encoded}/`,
+                    'Public records and background check.', 'gray');
+                add('Whitepages', `https://www.whitepages.com/name/${encoded}`,
+                    'Directory and contact information.', 'gray');
+                add('FastPeopleSearch', `https://www.fastpeoplesearch.com/name/${encoded}`,
+                    'US public records aggregator.', 'gray');
+                add('FamilySearch', `https://www.familysearch.org/search/record/results?count=20&query=%2Bgivenname%3A${encoded}`,
+                    'Genealogy and historical records.', 'yellow');
+                add('MyLife', `https://www.mylife.com/people/${encoded}`,
+                    'Public records and reputation.', 'orange');
+                add('Intelius', `https://www.intelius.com/search/people/${encoded}`,
+                    'Background checks and contact info.', 'purple');
+                add('BeenVerified', `https://www.beenverified.com/people/${encoded}`,
+                    'Background screening service.', 'pink');
+                add('TruthFinder', `https://www.truthfinder.com/search/${encoded}`,
+                    'Public records and arrest logs.', 'pink');
+            }
+
+            // ---- EMAIL (expanded) ----
+            if (mode === 'email' || mode === 'auto') {
+                add('Hunter.io', `https://hunter.io/search/${encoded}`,
+                    'Email address verification and domain lookup.', 'green');
+                add('EmailRep', `https://emailrep.io/${encoded}`,
+                    'Email reputation and risk analysis.', 'cyan');
+                add('Have I Been Pwned', `https://haveibeenpwned.com/account/${encoded}`,
+                    'Breach database check for email.', 'pink');
+                add('Dehashed', `https://dehashed.com/search?query=${encoded}`,
+                    'Dark web credential breach search.', 'purple');
+                add('LeakCheck', `https://leakcheck.io/search/${encoded}`,
+                    'Database leak search engine.', 'orange');
+                add('Epieos', `https://epieos.com/?q=${encoded}`,
+                    'Email OSINT tool with social links.', 'gray');
+                add('Skype Resolver', `https://www.skype.com/search/people?q=${encoded}`,
+                    'Search Skype profiles by email.', 'cyan');
+                add('Gravatar', `https://en.gravatar.com/${encoded}`,
+                    'Global avatar and profile association.', 'gray');
+                add('EmailHippo', `https://tools.emailhippo.com/email/${encoded}`,
+                    'Email verification and deliverability.', 'yellow');
+                add('VerifyEmail', `https://verify-email.org/check/${encoded}`,
+                    'Email address validation.', 'gray');
+                add('MailTester', `https://www.mailtester.com/testmail.php?email=${encoded}`,
+                    'Email existence check.', 'orange');
+                add('EmailFormat', `https://www.email-format.com/i/${encoded}/`,
+                    'Email pattern discovery.', 'gray');
+            }
+
+            // ---- PHONE (expanded) ----
+            if (mode === 'phone' || mode === 'auto') {
+                const digits = query.replace(/\D/g, '');
+                add('Truecaller', `https://www.truecaller.com/search/db/${digits}`,
+                    'Global phone number identification.', 'green');
+                add('SpyDialer', `https://spydialer.com/search/${digits}`,
+                    'Phone number lookup and voicemail.', 'gray');
+                add('Numverify', `https://numverify.com/phone/${digits}`,
+                    'International phone number validation.', 'cyan');
+                add('Whitepages Phone', `https://www.whitepages.com/phone/${digits}`,
+                    'US phone directory.', 'gray');
+                add('ZabaSearch Phone', `https://www.zabasearch.com/phone/${digits}`,
+                    'Reverse phone lookup.', 'gray');
+                add('CallerSmart', `https://callersmart.com/phone/${digits}`,
+                    'Community-reported spam and identity.', 'orange');
+                add('Twilio Lookup', `https://www.twilio.com/lookup/${digits}`,
+                    'Carrier and line type detection.', 'purple');
+                add('WhatsApp Link', `https://wa.me/${digits}`,
+                    'Direct WhatsApp messaging link.', 'green');
+                add('Telegram Link', `https://t.me/${digits}`,
+                    'Telegram profile by number.', 'pink');
+                add('PhoneInfoga', `https://phoneinfoga.com/?number=${digits}`,
+                    'Advanced phone number OSINT.', 'purple');
+                add('SearchBug', `https://www.searchbug.com/phone/${digits}`,
+                    'Phone number reverse lookup.', 'gray');
+                add('NumLookup', `https://www.numlookup.com/${digits}`,
+                    'Free phone number lookup.', 'cyan');
+            }
+
+            // ---- DOMAIN (expanded) ----
+            if (mode === 'domain' || mode === 'auto') {
+                add('WHOIS Lookup', `https://whois.domaintools.com/${encoded}`,
+                    'Domain registration and ownership records.', 'green');
+                add('SecurityTrails', `https://securitytrails.com/domain/${encoded}`,
+                    'DNS history and subdomain discovery.', 'cyan');
+                add('VirusTotal Domain', `https://www.virustotal.com/gui/domain/${encoded}`,
+                    'Security scanning and threat intelligence.', 'purple');
+                add('DNSlytics', `https://dnslytics.com/domain/${encoded}`,
+                    'DNS records and IP history.', 'gray');
+                add('Censys Domain', `https://search.censys.io/domain/${encoded}`,
+                    'Internet-wide asset discovery.', 'orange');
+                add('Shodan Domain', `https://www.shodan.io/domain/${encoded}`,
+                    'Device and service fingerprinting.', 'orange');
+                add('Criminal IP', `https://www.criminalip.io/domain/search?q=${encoded}`,
+                    'Threat intelligence for domains.', 'pink');
+                add('Wayback Machine', `https://web.archive.org/web/*/${encoded}`,
+                    'Historical website snapshots.', 'gray');
+                add('BuiltWith', `https://builtwith.com/${encoded}`,
+                    'Technology stack and analytics.', 'yellow');
+                add('DomainTools', `https://www.domaintools.com/search/?query=${encoded}`,
+                    'Comprehensive domain intelligence.', 'purple');
+                add('ViewDNS', `https://viewdns.info/domainhistory/?domain=${encoded}`,
+                    'Domain history and DNS records.', 'cyan');
+                add('WhoisXML', `https://www.whoisxmlapi.com/domain/${encoded}`,
+                    'Domain registration data.', 'gray');
+            }
+
+            // ---- IP (expanded) ----
+            if (mode === 'ip' || mode === 'auto') {
+                add('IPInfo.io', `https://ipinfo.io/${encoded}`,
+                    'Geolocation, ASN, and network data.', 'green');
+                add('ip-api.com', `http://ip-api.com/#${encoded}`,
+                    'Fast IP geolocation and ISP info.', 'cyan');
+                add('AbuseIPDB', `https://www.abuseipdb.com/check/${encoded}`,
+                    'IP reputation and abuse reports.', 'pink');
+                add('Censys IP', `https://search.censys.io/hosts/${encoded}`,
+                    'Internet-wide host enumeration.', 'purple');
+                add('Shodan IP', `https://www.shodan.io/host/${encoded}`,
+                    'Device and service intelligence.', 'orange');
+                add('VirusTotal IP', `https://www.virustotal.com/gui/ip-address/${encoded}`,
+                    'Security threat analysis.', 'gray');
+                add('GreyNoise', `https://www.greynoise.io/query?query=${encoded}`,
+                    'Internet noise and scanning activity.', 'gray');
+                add('IPQS', `https://www.ipqualityscore.com/ip/${encoded}`,
+                    'Fraud and proxy detection.', 'cyan');
+                add('WhatIsMyIP', `https://whatismyipaddress.com/ip/${encoded}`,
+                    'IP address details and location.', 'gray');
+                add('IPVoid', `https://www.ipvoid.com/${encoded}/`,
+                    'IP address blacklist check.', 'orange');
+                add('MXToolbox', `https://mxtoolbox.com/SuperTool.aspx?action=blacklist%3a${encoded}`,
+                    'Blacklist and DNS diagnostics.', 'purple');
+            }
+
+            // ---- USERNAME (expanded) ----
+            if (mode === 'username' || mode === 'auto') {
+                const u = query.replace(/^@/, '');
+                add('Namechk', `https://namechk.com/${u}`,
+                    'Check username availability across 50+ platforms.', 'green');
+                add('KnowEm', `https://knowem.com/${u}`,
+                    'Social media username search.', 'gray');
+                add('CheckUser', `https://checkuser.org/${u}`,
+                    'Username across social networks.', 'cyan');
+                add('SocialSearch', `https://www.social-search.com/${u}`,
+                    'Social media profile aggregator.', 'purple');
+                add('UserSearch', `https://usersearch.org/results.php?q=${u}`,
+                    'Multi-platform username lookup.', 'purple');
+                add('InstantCheckmate', `https://www.instantcheckmate.com/people/${u}`,
+                    'Background check and social profiles.', 'orange');
+                add('GitHub User', `https://github.com/${u}`,
+                    'Code repository and developer profile.', 'gray');
+                add('Reddit User', `https://www.reddit.com/user/${u}`,
+                    'Reddit posting history and activity.', 'pink');
+                add('Twitter/X User', `https://twitter.com/${u}`,
+                    'Social media presence and feed.', 'cyan');
+                add('Instagram User', `https://www.instagram.com/${u}`,
+                    'Visual media and social footprint.', 'purple');
+                add('LinkedIn User', `https://www.linkedin.com/in/${u}`,
+                    'Professional network and career history.', 'green');
+                add('YouTube Channel', `https://www.youtube.com/@${u}`,
+                    'Video content and channel analytics.', 'orange');
+                add('TikTok User', `https://www.tiktok.com/@${u}`,
+                    'Short-form video creator profile.', 'pink');
+                add('Snapchat User', `https://www.snapchat.com/add/${u}`,
+                    'Snapchat profile by username.', 'yellow');
+                add('Telegram User', `https://t.me/${u}`,
+                    'Telegram profile and channel.', 'cyan');
+                add('Discord User', `https://disboard.org/servers/tag/${u}`,
+                    'Discord server and community search.', 'purple');
+                add('Pinterest User', `https://www.pinterest.com/${u}/`,
+                    'Visual bookmarking and boards.', 'orange');
+                add('Tumblr Blog', `https://${u}.tumblr.com/`,
+                    'Microblogging platform.', 'gray');
+                add('Medium User', `https://medium.com/@${u}`,
+                    'Writing and publishing platform.', 'green');
+                add('Quora User', `https://www.quora.com/profile/${u}`,
+                    'Question and answer community.', 'cyan');
+            }
+
+            // ---- SOCIAL (expanded) ----
+            if (mode === 'social' || mode === 'auto') {
+                add('Facebook Search', `https://www.facebook.com/search/people/?q=${encoded}`,
+                    'Global social graph search.', 'green');
+                add('Instagram Explore', `https://www.instagram.com/explore/tags/${clean}/`,
+                    'Hashtag and media discovery.', 'purple');
+                add('LinkedIn Search', `https://www.linkedin.com/search/results/all/?keywords=${encoded}`,
+                    'Professional network search.', 'cyan');
+                add('X/Twitter Search', `https://twitter.com/search?q=${encoded}`,
+                    'Real-time microblogging activity.', 'gray');
+                add('YouTube Search', `https://www.youtube.com/results?search_query=${encoded}`,
+                    'Video content and metadata.', 'pink');
+                add('TikTok Search', `https://www.tiktok.com/search?q=${encoded}`,
+                    'Short-form video and creator discovery.', 'orange');
+                add('Reddit Search', `https://www.reddit.com/search/?q=${encoded}`,
+                    'Community discussions and threads.', 'gray');
+                add('Pinterest Search', `https://www.pinterest.com/search/pins/?q=${encoded}`,
+                    'Visual bookmarking and user boards.', 'yellow');
+                add('Tumblr Search', `https://www.tumblr.com/search/${encoded}`,
+                    'Microblogging and multimedia posts.', 'gray');
+                add('Snapchat Search', `https://www.snapchat.com/add/${clean}`,
+                    'Snapchat profile by username.', 'pink');
+                add('Telegram Search', `https://t.me/s/${clean}`,
+                    'Telegram channel and group discovery.', 'cyan');
+                add('Discord Search', `https://disboard.org/servers/tag/${encoded}`,
+                    'Discord server and community search.', 'purple');
+                add('VKontakte', `https://vk.com/search?q=${encoded}`,
+                    'Russian social network search.', 'orange');
+                add('Flickr', `https://www.flickr.com/search/?text=${encoded}`,
+                    'Photo sharing and metadata.', 'gray');
+                add('SoundCloud', `https://soundcloud.com/search?q=${encoded}`,
+                    'Audio and music platform.', 'cyan');
+            }
+
+            // ---- DARKWEB (specialized) ----
+            if (mode === 'darkweb' || mode === 'auto') {
+                add('DarkSearch', `https://darksearch.io/search?q=${encoded}`,
+                    'Dark web search engine (Tor).', 'purple');
+                add('Ahmia', `https://ahmia.fi/search/?q=${encoded}`,
+                    'Clearnet gateway to onion sites.', 'green');
+                add('OnionLand', `https://onionland.io/search?q=${encoded}`,
+                    'Dark web indexed search.', 'orange');
+                add('Tor66', `https://www.tor66.com/search?q=${encoded}`,
+                    'Onion search engine.', 'pink');
+                add('Grams', `https://grams7enufi7jmdl.onion/search?q=${encoded}`,
+                    'Darknet market search (requires Tor).', 'yellow');
+                add('DeepDotWeb', `https://deepdotweb.com/?s=${encoded}`,
+                    'Dark web news and resources.', 'gray');
+                add('Bitcoin Abuse', `https://www.bitcoinabuse.com/search/${encoded}`,
+                    'Bitcoin address abuse reports.', 'orange');
+                add('Blockchain Explorer', `https://www.blockchain.com/explorer/search?q=${encoded}`,
+                    'Cryptocurrency transaction lookup.', 'cyan');
+                add('BreachDirectory', `https://breachdirectory.org/search/${encoded}`,
+                    'Data breach and leaked credentials.', 'pink');
+                add('LeakCheck Dark', `https://leakcheck.io/search/${encoded}`,
+                    'Dark web credential scanning.', 'purple');
+            }
+
+            // ---- ALWAYS ADD: GENERAL WEB ----
+            if (mode !== 'domain' && mode !== 'ip' && mode !== 'email' && mode !== 'phone' && mode !== 'darkweb') {
+                add('Google Web', `https://www.google.com/search?q=${encoded}`,
+                    'Global web index · all public data.', 'green');
+                add('Bing Web', `https://www.bing.com/search?q=${encoded}`,
+                    'Microsoft search index.', 'gray');
+                add('DuckDuckGo', `https://duckduckgo.com/?q=${encoded}`,
+                    'Privacy-first web search.', 'cyan');
+                add('Yandex', `https://yandex.com/search/?text=${encoded}`,
+                    'Russian search engine · alternative index.', 'purple');
+                add('Yahoo', `https://search.yahoo.com/search?p=${encoded}`,
+                    'Legacy web search index.', 'gray');
+                add('Google News', `https://news.google.com/search?q=${encoded}`,
+                    'News articles and media coverage.', 'orange');
+                add('Bing News', `https://www.bing.com/news/search?q=${encoded}`,
+                    'Microsoft news aggregator.', 'cyan');
+                add('Reddit All', `https://www.reddit.com/search/?q=${encoded}&type=link`,
+                    'Community discussion across all subreddits.', 'pink');
+                add('Wikipedia', `https://en.wikipedia.org/w/index.php?search=${encoded}`,
+                    'Encyclopedia articles and references.', 'gray');
+                add('GitHub Search', `https://github.com/search?q=${encoded}`,
+                    'Code repositories and developer activity.', 'purple');
+                add('Stack Overflow', `https://stackoverflow.com/search?q=${encoded}`,
+                    'Technical Q&A and developer discussions.', 'orange');
+                add('Medium', `https://medium.com/search?q=${encoded}`,
+                    'Blogging platform and articles.', 'green');
+            }
+
+            // ---- DEDUPLICATE ----
+            const seen = new Set();
+            return sources.filter(s => {
+                if (seen.has(s.url)) return false;
+                seen.add(s.url);
+                return true;
+            });
+        }
+
+        // ============================================================
+        // RENDER RESULTS (from currentResults)
+        // ============================================================
+        function renderResults() {
+            resultsGrid.innerHTML = '';
+            currentResults.forEach((src, idx) => {
+                const card = document.createElement('div');
+                card.className = 'result-card';
+                card.style.animationDelay = `${idx * 0.03}s`;
+
+                const badgeClass = src.badge || 'gray';
+                const iconMap = {
+                    green: 'fa-shield-halved',
+                    cyan: 'fa-cloud',
+                    purple: 'fa-gem',
+                    pink: 'fa-heart',
+                    orange: 'fa-fire',
+                    yellow: 'fa-star',
+                    gray: 'fa-link'
+                };
+                const icon = iconMap[badgeClass] || 'fa-link';
+
+                card.innerHTML = `
+                    <div class="card-top">
+                        <span class="source-badge ${badgeClass}"><i class="fas ${icon}"></i> ${src.name}</span>
+                        <span style="font-size:0.6rem;color:var(--text-muted);">#${idx + 1}</span>
+                    </div>
+                    <div class="card-title">
+                        <span class="favicon"><i class="fas fa-globe"></i></span>
+                        <a href="${src.url}" target="_blank" rel="noopener noreferrer">
+                            ${src.name}
+                        </a>
+                    </div>
+                    <div class="card-url"><i class="fas fa-link"></i> ${src.url}</div>
+                    <div class="card-desc">${src.desc}</div>
+                    <div class="card-meta">
+                        <span><i class="fas fa-tag"></i> ${currentMode}</span>
+                        <span><i class="fas fa-clock"></i> ${new Date().toLocaleTimeString()}</span>
+                        <span><i class="fas fa-database"></i> OSINT node</span>
+                        <span><i class="fas fa-bolt"></i> ${badgeClass}</span>
+                    </div>
+                `;
+                resultsGrid.appendChild(card);
+            });
+            resultCount.textContent = currentResults.length;
+        }
+
+        // ============================================================
+        // CLEAR RESULTS
+        // ============================================================
+        function clearResults() {
+            resultsGrid.innerHTML = '';
+            currentResults = [];
+            resultCount.textContent = '0';
+            resultTime.innerHTML = '<i class="far fa-clock"></i> --';
+            loader.classList.remove('visible');
+            emptyState.style.display = 'block';
+            emptyState.innerHTML = `
+                <i class="fas fa-eye-slash"></i>
+                <h3>Cleared</h3>
+                <p>Enter a new query and hit <strong>Scan</strong>.</p>
+            `;
+            showToast('🧹 Results cleared');
+        }
+
+        function clearAll() {
+            queryInput.value = '';
+            clearResults();
+            resultsArea.classList.remove('visible');
+            queryInput.focus();
+        }
+
+        // ============================================================
+        // COPY RESULTS
+        // ============================================================
+        function copyResults() {
+            if (currentResults.length === 0) {
+                showToast('⚠️ No results to copy');
+                return;
+            }
+            const lines = currentResults.map((r, i) =>
+                `${i + 1}. ${r.name}\n   ${r.url}\n   ${r.desc}`
+            ).join('\n\n');
+            navigator.clipboard.writeText(`DiscoverEye Pro OSINT Report\nQuery: ${currentQuery}\nMode: ${currentMode}\nTotal: ${currentResults.length}\n\n${lines}`)
+                .then(() => showToast('📋 Copied to clipboard'))
+                .catch(() => showToast('⚠️ Could not copy'));
+        }
+
+        // ============================================================
+        // EXPORT JSON
+        // ============================================================
+        function exportJSON() {
+            if (currentResults.length === 0) {
+                showToast('⚠️ No results to export');
+                return;
+            }
+            const data = {
+                query: currentQuery,
+                mode: currentMode,
+                timestamp: new Date().toISOString(),
+                total: currentResults.length,
+                results: currentResults
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `discovereye_${currentQuery.replace(/\s/g, '_')}_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('📥 JSON exported');
+        }
+
+        // ============================================================
+        // EXPORT CSV
+        // ============================================================
+        function exportCSV() {
+            if (currentResults.length === 0) {
+                showToast('⚠️ No results to export');
+                return;
+            }
+            let csv = 'Name,URL,Description,Mode\n';
+            currentResults.forEach(r => {
+                csv += `"${r.name}","${r.url}","${r.desc}","${currentMode}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `discovereye_${currentQuery.replace(/\s/g, '_')}_${Date.now()}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('📥 CSV exported');
+        }
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(msg) {
+            toastMsg.textContent = msg;
+            toast.classList.add('visible');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(hideToast, 4000);
+        }
+
+        function hideToast() {
+            toast.classList.remove('visible');
+        }
+
+        // ============================================================
+        // THEME TOGGLE
+        // ============================================================
+        let darkTheme = true;
+        const themeBtn = document.querySelector('.theme-toggle');
+
+        function toggleTheme() {
+            darkTheme = !darkTheme;
+            const root = document.documentElement;
+            if (darkTheme) {
+                root.style.setProperty('--bg-primary', '#070b0d');
+                root.style.setProperty('--bg-secondary', '#0d1317');
+                root.style.setProperty('--bg-card', '#111a1f');
+                root.style.setProperty('--bg-input', '#162026');
+                root.style.setProperty('--border-dim', '#1f2e36');
+                root.style.setProperty('--text-primary', '#e8edee');
+                root.style.setProperty('--text-secondary', '#8a9ba8');
+                root.style.setProperty('--text-muted', '#4d5f6b');
+                themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+            } else {
+                root.style.setProperty('--bg-primary', '#f0f4f8');
+                root.style.setProperty('--bg-secondary', '#e2e8f0');
+                root.style.setProperty('--bg-card', '#ffffff');
+                root.style.setProperty('--bg-input', '#edf2f7');
+                root.style.setProperty('--border-dim', '#cbd5e1');
+                root.style.setProperty('--text-primary', '#0f172a');
+                root.style.setProperty('--text-secondary', '#334155');
+                root.style.setProperty('--text-muted', '#64748b');
+                themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+            showToast(darkTheme ? '🌙 Dark neon' : '☀️ Light mode');
+        }
+
+        // ============================================================
+        // KEYBOARD SHORTCUTS
+        // ============================================================
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                queryInput.focus();
+                queryInput.select();
+            }
+            if (e.key === 'Escape' && !e.target.closest('.search-bar-wrapper')) {
+                clearAll();
+            }
         });
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        emptyState.style.display = 'block';
+        queryInput.focus();
+        console.log('🔍 DiscoverEye Pro OSINT Nexus loaded');
+        console.log('📡 52+ OSINT sources · dark neon theme · advanced filters');
+        console.log('⌨️  Ctrl+K to search · Escape to clear');
     </script>
 </body>
 </html>
